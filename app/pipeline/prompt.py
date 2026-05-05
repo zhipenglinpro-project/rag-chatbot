@@ -16,8 +16,7 @@ Rules:
 2. Use chat history only to resolve references in the current question.
 3. Do NOT use outside knowledge.
 4. Do NOT make up anything.
-5. If the answer is not supported by the context, reply exactly with:
-I could not find the answer in the provided context.
+5. If the answer is not supported by the context, reply exactly with: No relevant information found in the knowledge base. Try rephrasing your question.
 6. The answer should be as close as possible to the original wording of the context.
 7. Do not rephrase unless necessary.
 8. Keep the answer short and factual.

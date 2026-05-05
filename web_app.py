@@ -287,9 +287,9 @@ if question:
                 st.session_state.latest_subject
             )
 
-            print("DEBUG question =", question)
-            print("DEBUG rewritten_query =", rewritten_query)
-            print("DEBUG latest_subject =", st.session_state.latest_subject)
+            # print("DEBUG question =", question)
+            # print("DEBUG rewritten_query =", rewritten_query)
+            # print("DEBUG latest_subject =", st.session_state.latest_subject)
 
             # 3. 初始检索
             initial_results = retrieve_documents(vectordb, rewritten_query, k=8)
@@ -297,7 +297,7 @@ if question:
 
             if initial_result_count == 0:
                 context = ""
-                answer = "I could not find any relevant context in the knowledge base."
+                answer = "No relevant information found in the knowledge base. Try rephrasing your question."
                 result_count = 0
             else:
                 # 4. Rerank

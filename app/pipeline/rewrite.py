@@ -17,18 +17,21 @@ def extract_entity_from_question(question: str) -> str | None:
     求职项目版本：只做轻量实体识别，不追求完美 NER。
     """
 
-    # 1. 先找大写实体，比如 Chris / LangChain
-    words = re.findall(r"\b[A-Z][a-z]+\b", question)
-    if words:
-        return words[0]
 
-    # 2. 再处理常见小写名字：只作为 demo 兜底
+    # 1. 处理常见小写名字：只作为 demo 兜底
     known_subjects = {"chris": "Chris"}
 
     tokens = re.findall(r"\b\w+\b", question.lower())
     for token in tokens:
         if token in known_subjects:
             return known_subjects[token]
+    
+    # 2. 先找大写实体，比如 LangChain
+    words = re.findall(r"\b[A-Z][a-z]+\b", question)
+    if words:
+        return words[0]
+
+
 
     return None
 
