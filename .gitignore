@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+vector_dbs/
+data/
+.DS_Store
+old_app.py
+old_ingest.py
