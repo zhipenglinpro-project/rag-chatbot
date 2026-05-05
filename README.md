@@ -88,7 +88,9 @@ streamlit run web_app.py
 
 📸 Demo
 
-(Add a screenshot here later)
+## 📸 Demo
+
+![RAG Demo](screenshot.png)
 
 ⸻
 
