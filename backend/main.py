@@ -1,0 +1,74 @@
+from fastapi import FastAPI, UploadFile, File
+
+from backend.schemas import ChatRequest, ChatResponse, UploadResponse
+from backend.rag_pipeline import answer_question
+from backend.document_service import load_uploaded_file, build_vector_db_from_documents
+
+
+
+app = FastAPI(
+    title="Local RAG AI Assistant API",
+    description="Backend API for RAG chatbot",
+    version="1.0.0"
+)
+
+
+@app.get("/health")
+def health_check():
+    """
+    Health check endpoint.
+    Used to confirm whether the backend server is running.
+    """
+    return {
+        "status": "ok",
+        "message": "RAG backend is running"
+    }
+
+
+@app.post("/chat", response_model=ChatResponse)
+def chat(request: ChatRequest):
+    """
+    Chat endpoint.
+
+    It receives a user question,
+    sends it to the RAG pipeline,
+    and returns the answer plus retrieval metadata.
+    """
+    result = answer_question(request.question)
+
+    return ChatResponse(
+        answer=result["answer"],
+        rewritten_query=result["rewritten_query"],
+        initial_retrieved_chunks=result["initial_retrieved_chunks"],
+        reranked_chunks_used=result["reranked_chunks_used"],
+        sources=result["sources"]
+    )
+
+@app.post("/upload", response_model=UploadResponse)
+async def upload_file(file: UploadFile = File(...)):
+    """
+    Upload TXT or PDF file and build a new vector database.
+    """
+    file_bytes = await file.read()
+
+    documents = load_uploaded_file(
+        file_bytes=file_bytes,
+        filename=file.filename
+    )
+
+    if not documents:
+        return UploadResponse(
+            message="No readable content found in uploaded file.",
+            document_count=0,
+            chunk_count=0,
+            db_path=""
+        )
+
+    result = build_vector_db_from_documents(documents)
+
+    return UploadResponse(
+        message="Knowledge base built successfully.",
+        document_count=result["document_count"],
+        chunk_count=result["chunk_count"],
+        db_path=result["db_path"]
+    )

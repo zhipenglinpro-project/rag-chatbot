@@ -60,41 +60,116 @@ Answer + Retrieved Context
 
 ## 📂 Project Structure
 
-```
+```text
+
 rag-chatbot-demo/
 ├── app/
 │   ├── pipeline/
-│   │   ├── rewrite.py        # Query rewriting logic
-│   │   └── prompt.py         # Prompt construction
+│   │   ├── rewrite.py
+│   │   └── prompt.py
 │   ├── retrieval/
-│   │   ├── retriever.py      # Vector retrieval
-│   │   └── reranker.py       # Reranking logic
+│   │   ├── retriever.py
+│   │   └── reranker.py
 │   └── utils/
-│       └── logger.py         # Logging system
-├── vector_dbs/               # Local vector database
-├── web_app.py                # Streamlit UI entry
+│       └── logger.py
+├── backend/
+│   ├── main.py
+│   ├── schemas.py
+│   ├── rag_pipeline.py
+│   ├── vector_store.py
+│   ├── document_service.py
+│   └── llm_factory.py
+├── frontend_app.py
+├── web_app.py
 ├── requirements.txt
+├── screenshot.png
 └── README.md
 ```
 
 ---
 
+## 🔌 API Endpoints
+
+```text
+GET  /health
+POST /chat
+POST /upload
+
+```
+
+### POST /chat
+
+Request:
+
+```json
+{
+  "question": "What is Chris learning?"
+}
+
+```
+
+Response:
+
+```json
+
+{
+  "answer": "...",
+  "rewritten_query": "...",
+  "initial_retrieved_chunks": 8,
+  "reranked_chunks_used": 3,
+  "sources": ["..."]
+}
+
+```
+
+### POST /upload
+
+Uploads a TXT or PDF file and builds a new Chroma vector database.
+
+---
+
 ## ⚙️ How to Run
 
+### 1. Create virtual environment
+
 ```bash
-# Create virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
+```
 
-# Start local LLM
+### 2. Configure environment variables
+
+Create a `.env` file:
+
+```env
+LLM_PROVIDER=ollama
+OLLAMA_MODEL=llama3.2
+```
+
+### 3. Start Ollama
+
+```bash
 ollama serve
-ollama pull llama3
+ollama pull llama3.2
+```
 
-# Run the app
-streamlit run web_app.py
+### 4. Start FastAPI backend
+
+```bash
+uvicorn backend.main:app --reload
+```
+
+Backend API docs:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### 5. Start Streamlit frontend
+
+```bash
+streamlit run frontend_app.py
 ```
 
 ---
