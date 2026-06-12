@@ -26,20 +26,23 @@ This project enables users to upload documents and ask questions, with answers s
 
 ## 🧱 System Architecture
 
-```
-User Question
-    ↓
-Query Rewrite (Pronoun Resolution)
-    ↓
-Vector Retrieval (Chroma)
-    ↓
-Reranking
-    ↓
-Prompt Construction
-    ↓
-Local LLM (Ollama)
-    ↓
-Streamlit UI
+```text
+User
+↓
+Streamlit Frontend
+↓ HTTP Request
+FastAPI Backend
+↓
+RAG Pipeline
+├── Query Rewrite
+├── Chroma Vector Retrieval
+├── Reranking
+├── Prompt Construction
+└── LLM Factory
+    ├── Ollama (local)
+    └── OpenAI / Groq / Together (planned)
+↓
+Answer + Retrieved Context
 ```
 
 ---
