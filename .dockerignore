@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+
+.git/
+
+vector_dbs/
+data/
+
+old_app.py
+old_ingest.py
+
+screenshot.png

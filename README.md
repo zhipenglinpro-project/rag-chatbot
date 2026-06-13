@@ -193,6 +193,63 @@ streamlit run frontend_app.py
 
 ---
 
+## 🐳 Docker Setup
+
+This project supports Docker-based local development with separate frontend and backend containers.
+
+### Architecture
+
+```text
+Browser
+↓
+Streamlit Frontend Container
+↓ HTTP
+FastAPI Backend Container
+↓
+RAG Pipeline
+↓
+Chroma Vector Store
+↓
+Local Ollama via host.docker.internal
+```
+### Run with Docker
+
+Make sure Ollama is running locally:
+
+```bash
+OLLAMA_HOST=0.0.0.0:11434 ollama serve
+```
+
+Then start the application:
+
+```bash
+docker compose up
+```
+
+
+Frontend:
+```text
+http://localhost:8501
+```
+
+Backend API docs:
+
+```text
+http://localhost:8000/docs
+```
+
+
+### Notes
+
+The backend connects to local Ollama using:
+
+```text
+http://host.docker.internal:11434
+```
+
+This allows Docker containers to access the Ollama service running on the host machine.
+---
+
 ## 👨‍💻 Author
 
 **Zhipeng L
