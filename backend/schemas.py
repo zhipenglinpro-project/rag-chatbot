@@ -18,6 +18,7 @@ class ChatResponse(BaseModel):
     initial_retrieved_chunks: int = 0
     reranked_chunks_used: int = 0
     sources: List[str] = []
+    tool_name: str | None = None
 
 class UploadResponse(BaseModel):
     """

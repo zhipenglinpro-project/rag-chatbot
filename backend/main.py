@@ -1,7 +1,8 @@
 from fastapi import FastAPI, UploadFile, File
 
 from backend.schemas import ChatRequest, ChatResponse, UploadResponse
-from backend.rag_pipeline import answer_question
+from backend.agent.router import route_query
+# from backend.rag_pipeline import answer_question
 from backend.document_service import load_uploaded_file, build_vector_db_from_documents
 
 
@@ -34,14 +35,19 @@ def chat(request: ChatRequest):
     sends it to the RAG pipeline,
     and returns the answer plus retrieval metadata.
     """
-    result = answer_question(request.question)
+    
+    result = result = route_query(request.question)
+
+    #result = answer_question(request.question)
+
 
     return ChatResponse(
-        answer=result["answer"],
-        rewritten_query=result["rewritten_query"],
-        initial_retrieved_chunks=result["initial_retrieved_chunks"],
-        reranked_chunks_used=result["reranked_chunks_used"],
-        sources=result["sources"]
+        answer=result.get("answer", ""),
+        rewritten_query=result.get("rewritten_query"),
+        initial_retrieved_chunks=result.get("initial_retrieved_chunks", 0),
+        reranked_chunks_used=result.get("reranked_chunks_used", 0),
+        sources=result.get("sources", []),
+        tool_name=result.get("tool_name")
     )
 
 @app.post("/upload", response_model=UploadResponse)

@@ -1,8 +1,10 @@
 # 🤖 Local RAG AI Assistant
 
-A **local Retrieval-Augmented Generation (RAG) chatbot** built with **LangChain, Ollama, and Streamlit**.
+A production-style local Retrieval-Augmented Generation (RAG) AI Assistant built with LangChain, FastAPI, Ollama, Streamlit, and Docker.
 
-This project enables users to upload documents and ask questions, with answers strictly grounded in the provided knowledge base — reducing hallucination and improving reliability.
+The system supports document-based question answering, intelligent tool selection, and modular AI service architecture.
+
+It enables users to upload documents and interact with a Multi-tool AI Agent that can answer questions, summarize documents, extract keywords, and provide knowledge base metadata.
 
 ---
 
@@ -14,35 +16,55 @@ This project enables users to upload documents and ask questions, with answers s
 
 ## 🚀 Features
 
-- 📄 Upload TXT / PDF documents  
-- 🔍 Semantic search using vector database (Chroma)  
-- 🧠 Query rewriting with pronoun resolution  
-- 📊 Reranking for improved retrieval quality  
-- 🤖 Local LLM (Ollama) for answer generation  
-- 🖥️ Interactive UI built with Streamlit  
-- 🔒 Strict grounding to prevent hallucination  
+- 📄 Upload TXT / PDF documents
+- 🔍 Semantic search using Chroma Vector Database
+- 🧠 Query rewriting with pronoun resolution
+- 📊 Reranking for improved retrieval accuracy
+- 🤖 Local LLM integration using Ollama (Llama 3.2)
+- 🧰 Multi-tool AI Agent architecture
+  - RAG Search Tool
+  - Document Summary Tool
+  - Keyword Extraction Tool
+  - Metadata Tool
+- ⚙️ FastAPI backend with RESTful APIs
+- 🖥️ Streamlit frontend
+- 🐳 Dockerized frontend and backend services
+- 🔒 Strict grounding to reduce hallucination 
 
 ---
 
 ## 🧱 System Architecture
 
 ```text
+
 User
 ↓
 Streamlit Frontend
 ↓ HTTP Request
 FastAPI Backend
 ↓
-RAG Pipeline
-├── Query Rewrite
-├── Chroma Vector Retrieval
-├── Reranking
-├── Prompt Construction
-└── LLM Factory
-    ├── Ollama (local)
-    └── OpenAI / Groq / Together (planned)
-↓
-Answer + Retrieved Context
+Agent Router
+├── RAG Search Tool
+│       ↓
+│   Query Rewrite
+│       ↓
+│   Chroma Retrieval
+│       ↓
+│   Reranking
+│       ↓
+│   LLM Generation
+│
+├── Summary Tool
+│       ↓
+│   LLM Summarization
+│
+├── Keyword Tool
+│       ↓
+│   Keyword Extraction
+│
+└── Metadata Tool
+        ↓
+    System Information
 ```
 
 ---
@@ -88,53 +110,144 @@ rag-chatbot-demo/
 
 ---
 
+---
+
+## 🛠️ Tech Stack
+
+### Backend
+
+- Python
+- FastAPI
+- Pydantic
+- LangChain
+- RESTful API Design
+
+### AI & RAG
+
+- Ollama (Local LLM - Llama 3.2)
+- SentenceTransformers
+- Chroma Vector Database
+- Retrieval-Augmented Generation (RAG)
+- Query Rewriting
+- Reranking
+- Multi-tool Agent Architecture
+
+### Frontend
+
+- Streamlit
+- HTTP Requests
+
+### DevOps & Engineering
+
+- Docker
+- Docker Compose
+- Environment Variable Management
+- Modular Service Architecture
+
+---
+
+## 📂 Project Structure
+
+```text
+rag-chatbot-demo/
+│
+├── backend/
+│   ├── agent/
+│   │   └── router.py             # Tool selection logic
+│   │
+│   ├── tools/
+│   │   ├── rag_tool.py           # Knowledge-based QA
+│   │   ├── summary_tool.py       # Document summarization
+│   │   ├── keyword_tool.py       # Keyword extraction
+│   │   └── metadata_tool.py      # System metadata
+│   │
+│   ├── main.py                   # FastAPI application
+│   ├── schemas.py                # API request/response models
+│   ├── rag_pipeline.py           # Core RAG workflow
+│   ├── vector_store.py           # Chroma management
+│   ├── document_service.py       # File processing & chunking
+│   └── llm_factory.py            # LLM provider abstraction
+│
+├── frontend_app.py               # Streamlit frontend
+│
+├── Dockerfile.backend
+├── Dockerfile.frontend
+├── docker-compose.yml
+│
+├── requirements.txt              # Development dependencies
+├── requirements.docker.txt       # Docker runtime dependencies
+│
+├── vector_dbs/
+├── data/
+│
+├── .dockerignore
+├── .env
+├── screenshot.png
+└── README.md
+```
+
+---
+
 ## 🔌 API Endpoints
 
 ```text
 GET  /health
 POST /chat
 POST /upload
-
 ```
-
-### POST /chat
-
-Request:
-
-```json
-{
-  "question": "What is Chris learning?"
-}
-
-```
-
-Response:
-
-```json
-
-{
-  "answer": "...",
-  "rewritten_query": "...",
-  "initial_retrieved_chunks": 8,
-  "reranked_chunks_used": 3,
-  "sources": ["..."]
-}
-
-```
-
-### POST /upload
-
-Uploads a TXT or PDF file and builds a new Chroma vector database.
 
 ---
 
-## ⚙️ How to Run
+### POST /chat
+
+Example Request:
+
+```json
+{
+  "question": "What are the key topics in this document?"
+}
+```
+
+Example Response:
+
+```json
+{
+  "tool_name": "keyword",
+  "answer": "The main topics are...",
+  "rewritten_query": null,
+  "initial_retrieved_chunks": 8,
+  "reranked_chunks_used": 3,
+  "sources": [
+    "Retrieved document content..."
+  ]
+}
+```
+
+---
+
+### POST /upload
+
+Upload a TXT or PDF file.
+
+The backend will:
+
+1. Parse the document
+2. Split it into chunks
+3. Generate embeddings
+4. Store vectors in Chroma
+5. Build a new knowledge base
+
+---
+
+## ⚙️ Local Development Setup
 
 ### 1. Create virtual environment
 
 ```bash
 python3 -m venv .venv
+
 source .venv/bin/activate
+
 pip install -r requirements.txt
 ```
 
@@ -151,6 +264,11 @@ OLLAMA_MODEL=llama3.2
 
 ```bash
 ollama serve
+```
+
+Make sure the model is available:
+
+```bash
 ollama pull llama3.2
 ```
 
@@ -160,7 +278,7 @@ ollama pull llama3.2
 uvicorn backend.main:app --reload
 ```
 
-Backend API docs:
+Backend API documentation:
 
 ```text
 http://127.0.0.1:8000/docs
@@ -171,33 +289,13 @@ http://127.0.0.1:8000/docs
 ```bash
 streamlit run frontend_app.py
 ```
-
----
-
-## 🎯 Key Highlights
-
-- Built a **RAG pipeline from scratch**  
-- Implemented **query rewriting with pronoun resolution**  
-- Designed a **retrieval + reranking pipeline**  
-- Applied **strict grounding to reduce hallucination**  
-- Structured code in a **modular, production-like architecture**  
-
----
-
-## 📌 Future Improvements
-
-- Hybrid query rewriting (rule-based + LLM)  
-- Multi-document context reasoning  
-- Deployment (Streamlit Cloud / Docker)  
-- RAG evaluation metrics (retrieval quality, answer accuracy)  
-
 ---
 
 ## 🐳 Docker Setup
 
 This project supports Docker-based local development with separate frontend and backend containers.
 
-### Architecture
+### Docker Architecture
 
 ```text
 Browser
@@ -206,12 +304,16 @@ Streamlit Frontend Container
 ↓ HTTP
 FastAPI Backend Container
 ↓
-RAG Pipeline
+Agent Router
+↓
+RAG Pipeline / AI Tools
 ↓
 Chroma Vector Store
 ↓
-Local Ollama via host.docker.internal
+Local Ollama Service
+(host.docker.internal:11434)
 ```
+
 ### Run with Docker
 
 Make sure Ollama is running locally:
@@ -220,35 +322,68 @@ Make sure Ollama is running locally:
 OLLAMA_HOST=0.0.0.0:11434 ollama serve
 ```
 
-Then start the application:
+Start the application using Docker Compose:
 
 ```bash
 docker compose up
 ```
 
-
 Frontend:
+
 ```text
 http://localhost:8501
 ```
 
-Backend API docs:
+Backend API documentation:
 
 ```text
 http://localhost:8000/docs
 ```
 
-
 ### Notes
 
-The backend connects to local Ollama using:
+The Docker backend communicates with the local Ollama service through:
 
 ```text
 http://host.docker.internal:11434
 ```
 
-This allows Docker containers to access the Ollama service running on the host machine.
+This allows Docker containers to access the LLM service running on the host machine.
+
 ---
+
+## 🎯 Key Highlights
+
+- Designed and implemented a production-style RAG architecture
+- Built a modular FastAPI backend and separated AI services from the frontend
+- Implemented semantic retrieval using Chroma Vector Database and Sentence Transformers
+- Improved answer quality using query rewriting and reranking techniques
+- Developed a multi-tool AI Agent capable of selecting different tools based on user intent
+- Implemented an extensible LLM provider factory supporting local and future cloud LLM services
+- Containerized frontend and backend services using Docker and Docker Compose
+- Designed the system with future cloud deployment and agent expansion in mind
+
+---
+
+## 📌 Future Improvements
+
+- Replace rule-based routing with LLM-based Agent Router
+- Integrate LangGraph for advanced multi-step tool calling
+- Deploy the application to cloud platforms such as Render or Railway
+- Add RAG evaluation metrics (retrieval accuracy, answer quality, latency)
+- Migrate from Chroma to PostgreSQL + pgvector for production-level vector storage
+- Build a React frontend for a more scalable user experience
+
+---
+
+## 👨‍💻 Author
+
+**Zhipeng Lin**
+
+AI Application Engineer | Data Analyst | Software Developer
+
+GitHub:
+https://github.com/zhipenglinpro-project
 
 ## 👨‍💻 Author
 

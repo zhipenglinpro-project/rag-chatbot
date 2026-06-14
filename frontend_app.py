@@ -62,6 +62,9 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
         if message["role"] == "assistant":
+            if message.get("tool_name"):
+                st.caption(f"Tool used: {message['tool_name']}")
+
             if message.get("rewritten_query"):
                 st.caption(f"Rewritten query: {message['rewritten_query']}")
 
@@ -106,6 +109,10 @@ if question:
 
         with st.chat_message("assistant"):
             st.markdown(answer)
+
+            if result.get("tool_name"):
+                st.caption(f"Tool used: {result['tool_name']}")
+
             st.caption(f"Rewritten query: {result['rewritten_query']}")
             st.caption(
                 f"Initial retrieved chunks: {result['initial_retrieved_chunks']}"
@@ -123,6 +130,7 @@ if question:
         st.session_state.messages.append({
             "role": "assistant",
             "content": answer,
+            "tool_name": result["tool_name"],
             "rewritten_query": result["rewritten_query"],
             "initial_retrieved_chunks": result["initial_retrieved_chunks"],
             "reranked_chunks_used": result["reranked_chunks_used"],
