@@ -71,49 +71,6 @@ Agent Router
 
 ## 🛠️ Tech Stack
 
-- Python  
-- LangChain  
-- Ollama (Local LLM)  
-- Chroma Vector Database  
-- Streamlit  
-- SentenceTransformers  
-
----
-
-## 📂 Project Structure
-
-```text
-
-rag-chatbot-demo/
-├── app/
-│   ├── pipeline/
-│   │   ├── rewrite.py
-│   │   └── prompt.py
-│   ├── retrieval/
-│   │   ├── retriever.py
-│   │   └── reranker.py
-│   └── utils/
-│       └── logger.py
-├── backend/
-│   ├── main.py
-│   ├── schemas.py
-│   ├── rag_pipeline.py
-│   ├── vector_store.py
-│   ├── document_service.py
-│   └── llm_factory.py
-├── frontend_app.py
-├── web_app.py
-├── requirements.txt
-├── screenshot.png
-└── README.md
-```
-
----
-
----
-
-## 🛠️ Tech Stack
-
 ### Backend
 
 - Python
@@ -365,11 +322,24 @@ This allows Docker containers to access the LLM service running on the host mach
 
 ---
 
+
+## ☁️ Deployment Note
+
+This project is designed as a local-first AI application.
+
+The complete RAG pipeline uses local vector storage, Sentence Transformers embeddings, and Ollama-based local LLM inference, which may exceed the memory limits of free cloud instances.
+
+Therefore, the recommended demonstration environment is Docker-based local deployment.
+
+The system also includes an extensible LLM provider abstraction layer, allowing future migration to cloud LLM services such as Groq or OpenAI without major architecture changes.
+
+---
+
 ## 📌 Future Improvements
 
 - Replace rule-based routing with LLM-based Agent Router
 - Integrate LangGraph for advanced multi-step tool calling
-- Deploy the application to cloud platforms such as Render or Railway
+- Optimize the architecture for lightweight cloud deployment on platforms such as Render or Railway
 - Add RAG evaluation metrics (retrieval accuracy, answer quality, latency)
 - Migrate from Chroma to PostgreSQL + pgvector for production-level vector storage
 - Build a React frontend for a more scalable user experience
@@ -385,6 +355,3 @@ AI Application Engineer | Data Analyst | Software Developer
 GitHub:
 https://github.com/zhipenglinpro-project
 
-## 👨‍💻 Author
-
-**Zhipeng L
