@@ -2,6 +2,10 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 
+class DeleteKnowledgeBaseResponse(BaseModel):
+    message: str
+    deleted: bool
+
 class ChatRequest(BaseModel):
     """
     Request body for /chat endpoint.

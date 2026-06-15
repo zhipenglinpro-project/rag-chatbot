@@ -1,9 +1,9 @@
+from typing import List
 from fastapi import FastAPI, UploadFile, File
-
-from backend.schemas import ChatRequest, ChatResponse, UploadResponse
+from backend.schemas import ChatRequest, ChatResponse, UploadResponse, DeleteKnowledgeBaseResponse
 from backend.agent.router import route_query
 # from backend.rag_pipeline import answer_question
-from backend.document_service import load_uploaded_file, build_vector_db_from_documents
+from backend.document_service import load_uploaded_file, build_vector_db_from_documents, delete_latest_vector_db
 
 
 
@@ -13,6 +13,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
+@app.delete("/knowledge_base", response_model=DeleteKnowledgeBaseResponse)
+def delete_knowledge_base():
+    result = delete_latest_vector_db()
+
+    return DeleteKnowledgeBaseResponse(
+        message=result["message"],
+        deleted=result["deleted"]
+    )
 
 @app.get("/health")
 def health_check():
@@ -51,26 +59,31 @@ def chat(request: ChatRequest):
     )
 
 @app.post("/upload", response_model=UploadResponse)
-async def upload_file(file: UploadFile = File(...)):
+async def upload_files(files: List[UploadFile] = File(...)):
     """
-    Upload TXT or PDF file and build a new vector database.
+    Upload one or multiple TXT/PDF files and build a new vector database.
     """
-    file_bytes = await file.read()
+    all_documents = []
 
-    documents = load_uploaded_file(
-        file_bytes=file_bytes,
-        filename=file.filename
-    )
+    for file in files:
+        file_bytes = await file.read()
 
-    if not documents:
+        documents = load_uploaded_file(
+            file_bytes=file_bytes,
+            filename=file.filename
+        )
+
+        all_documents.extend(documents)
+
+    if not all_documents:
         return UploadResponse(
-            message="No readable content found in uploaded file.",
+            message="No readable content found in uploaded files.",
             document_count=0,
             chunk_count=0,
             db_path=""
         )
 
-    result = build_vector_db_from_documents(documents)
+    result = build_vector_db_from_documents(all_documents)
 
     return UploadResponse(
         message="Knowledge base built successfully.",

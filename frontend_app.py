@@ -17,24 +17,31 @@ st.write("Frontend connected to FastAPI backend.")
 with st.sidebar:
     st.header("Knowledge Base")
 
-    uploaded_file = st.file_uploader(
-        "Upload TXT or PDF file",
-        type=["txt", "pdf"]
+    uploaded_files = st.file_uploader(
+        "Upload TXT or PDF files",
+        type=["txt", "pdf"],
+        accept_multiple_files=True
     )
 
-    if st.button("Upload and Build Knowledge Base"):
-        if uploaded_file is None:
-            st.warning("Please upload a TXT or PDF file first.")
+    if st.button("Build Knowledge Base"):
+        if not uploaded_files:
+            st.warning("Please upload at least one TXT or PDF file first.")
         else:
-            files = {
-                "file": (
-                    uploaded_file.name,
-                    uploaded_file.getvalue(),
-                    uploaded_file.type
-                )
-            }
+            files = []
 
-            with st.spinner("Uploading file and building knowledge base..."):
+            for uploaded_file in uploaded_files:
+                files.append(
+                    (
+                        "files",
+                        (
+                            uploaded_file.name,
+                            uploaded_file.getvalue(),
+                            uploaded_file.type
+                        )
+                    )
+                )
+
+            with st.spinner("Uploading files and building knowledge base..."):
                 response = requests.post(
                     f"{API_BASE_URL}/upload",
                     files=files
@@ -49,6 +56,26 @@ with st.sidebar:
                 st.error("Upload failed.")
                 st.write(response.text)
 
+    if st.button("Clear Chat History"):
+        st.session_state.messages = []
+        st.rerun()
+
+    if st.button("Delete Current Knowledge Base"):
+        with st.spinner("Deleting current knowledge base..."):
+            response = requests.delete(f"{API_BASE_URL}/knowledge_base")
+
+        if response.status_code == 200:
+            result = response.json()
+            if result["deleted"]:
+                st.success(result["message"])
+            else:
+                st.info(result["message"])
+
+            st.session_state.messages = []
+            st.rerun()
+        else:
+            st.error("Delete failed.")
+            st.write(response.text)
 
 # ---------------------------
 # Chat UI

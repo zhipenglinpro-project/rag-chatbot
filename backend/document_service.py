@@ -7,7 +7,25 @@ from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from backend.vector_store import get_embedding_model, VECTOR_DB_ROOT
+from backend.vector_store import get_embedding_model, VECTOR_DB_ROOT, get_latest_vector_db_path
+
+
+
+def delete_latest_vector_db():
+    db_path = get_latest_vector_db_path()
+
+    if not db_path:
+        return {
+            "message": "No active knowledge base found.",
+            "deleted": False
+        }
+
+    shutil.rmtree(db_path, ignore_errors=True)
+
+    return {
+        "message": "Current knowledge base deleted.",
+        "deleted": True
+    }
 
 
 def load_uploaded_file(file_bytes: bytes, filename: str):
