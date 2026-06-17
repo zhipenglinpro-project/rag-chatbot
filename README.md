@@ -8,9 +8,9 @@ It enables users to upload documents and interact with a Multi-tool AI Agent tha
 
 ---
 
-## 📸 Demo
+## 📸 RAG Chatbot
 
-![RAG Demo](screenshot.png)
+![RAG Chatbot](screenshot.png)
 
 ---
 
@@ -106,7 +106,7 @@ Agent Router
 ## 📂 Project Structure
 
 ```text
-rag-chatbot-demo/
+rag-chatbot/
 │
 ├── backend/
 │   ├── agent/
@@ -353,5 +353,5 @@ The system also includes an extensible LLM provider abstraction layer, allowing 
 AI Application Engineer | Data Analyst | Software Developer
 
 GitHub:
-https://github.com/zhipenglinpro-project
+https://github.com/zhipenglinpro-project/rag-chatbot
 
