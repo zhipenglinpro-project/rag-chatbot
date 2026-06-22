@@ -12,3 +12,4 @@ langchain-text-splitters
 langchain-openai
 chromadb
 sentence-transformers
+pytest
