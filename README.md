@@ -362,35 +362,44 @@ This allows Docker containers to access the LLM service running on the host mach
 
 ---
 
-## 🧪 Evaluation
+## 📊 Evaluation
 
-The system has been manually validated using representative RAG scenarios.
+The RAG pipeline was manually evaluated across:
 
-### Evaluation Areas
+- Query rewriting
+- Retrieval quality
+- Reranking effectiveness
+- Grounded answer generation
+- Fallback handling
+- Multi-tool routing
 
-* Multi-turn query rewriting
-* Semantic retrieval quality
-* Reranking effectiveness
-* Grounded answer generation
-* Fallback behaviour
+Summary:
 
-### Example
+- 9/9 evaluation scenarios passed
+- 100% success rate
 
-Question:
+Detailed results:
 
-What is Chris learning?
+See `EVALUATION.md`
 
-Retrieved Context:
+---
 
-Chris is learning how to build AI applications using LangChain.
+## 🔄 CI/CD
 
-### Answer:
+This project includes automated validation through GitHub Actions.
 
-Chris is learning how to build AI applications using LangChain.
+The CI pipeline automatically runs:
 
-### Grounded:
+- FastAPI endpoint tests
+- Multi-tool routing tests
+- Chat workflow tests
 
-✅ Yes
+on every push and pull request.
+
+Run locally:
+
+```bash
+pytest tests -v
 
 ---
 
