@@ -1,6 +1,6 @@
-# 🤖 Local RAG AI Assistant
+# 🤖 AI Multi-tool RAG Assistant
 
-A production-style local Retrieval-Augmented Generation (RAG) AI Assistant built with LangChain, FastAPI, Ollama, Streamlit, and Docker.
+A modular, deployment-ready Retrieval-Augmented Generation (RAG) application built with FastAPI, LangChain, Ollama, Streamlit, and Docker.
 
 The system supports document-based question answering, intelligent tool selection, and modular AI service architecture.
 
@@ -100,6 +100,59 @@ Agent Router
 - Docker Compose
 - Environment Variable Management
 - Modular Service Architecture
+
+---
+
+## 🔄 Provider Switching Validation
+
+The application supports both local and cloud-hosted Large Language Models through a provider abstraction layer implemented in `llm_factory.py`.
+
+Provider selection is controlled through environment variables without requiring code changes.
+
+Example:
+
+```env
+LLM_PROVIDER=ollama
+OLLAMA_MODEL=llama3.2
+```
+
+or
+
+```env
+LLM_PROVIDER=groq
+GROQ_MODEL=llama-3.3-70b-versatile
+```
+
+### Validation Results
+
+| Provider | Status |
+|-----------|----------|
+| Ollama (Llama 3.2) | ✅ Tested |
+| Groq (Llama 3.3 70B Versatile) | ✅ Tested |
+
+Both providers were manually validated by switching environment variables and running the full application workflow without modifying application code.
+
+---
+
+## 🏗️ Engineering Decisions
+
+### Why Chroma?
+
+Chroma provides lightweight local vector storage with seamless LangChain integration, making it suitable for rapid development and experimentation.
+
+Future production deployments could migrate to PostgreSQL + pgvector for improved scalability.
+
+### Why Multiple LLM Providers?
+
+Ollama enables fully local inference and offline experimentation.
+
+Groq provides low-latency cloud-hosted inference.
+
+A provider abstraction layer allows switching between local and cloud models without changing business logic.
+
+### Why FastAPI?
+
+FastAPI separates frontend and backend responsibilities, provides automatic OpenAPI documentation, and supports future deployment scenarios.
 
 ---
 
@@ -309,6 +362,38 @@ This allows Docker containers to access the LLM service running on the host mach
 
 ---
 
+## 🧪 Evaluation
+
+The system has been manually validated using representative RAG scenarios.
+
+### Evaluation Areas
+
+* Multi-turn query rewriting
+* Semantic retrieval quality
+* Reranking effectiveness
+* Grounded answer generation
+* Fallback behaviour
+
+### Example
+
+Question:
+
+What is Chris learning?
+
+Retrieved Context:
+
+Chris is learning how to build AI applications using LangChain.
+
+### Answer:
+
+Chris is learning how to build AI applications using LangChain.
+
+### Grounded:
+
+✅ Yes
+
+---
+
 ## 🎯 Key Highlights
 
 - Designed and implemented a production-style RAG architecture
@@ -319,6 +404,50 @@ This allows Docker containers to access the LLM service running on the host mach
 - Implemented an extensible LLM provider factory supporting local and future cloud LLM services
 - Containerized frontend and backend services using Docker and Docker Compose
 - Designed the system with future cloud deployment and agent expansion in mind
+
+---
+
+## 🧪 Testing
+
+The project includes automated tests covering API availability, multi-tool agent routing, and chat endpoint behaviour.
+
+### Run All Tests
+
+```bash
+pytest tests -v
+```
+
+### Test Coverage
+
+| Test File | Purpose |
+|------------|----------|
+| test_health.py | Validate FastAPI health endpoint |
+| test_router.py | Validate multi-tool agent routing |
+| test_chat.py | Validate chat API request/response flow |
+
+### Example Result
+
+```text
+tests/test_health.py::test_health_endpoint PASSED
+
+tests/test_router.py::test_route_to_summary PASSED
+tests/test_router.py::test_route_to_keyword PASSED
+tests/test_router.py::test_route_to_metadata PASSED
+tests/test_router.py::test_route_to_rag PASSED
+
+tests/test_chat.py::test_chat_endpoint_with_mock PASSED
+
+========================
+6 passed
+========================
+```
+
+### Testing Strategy
+
+- Health endpoint testing verifies API availability.
+- Router tests validate tool selection logic.
+- Chat endpoint tests validate request and response schemas.
+- Mocked tests are used to isolate API behaviour from external LLM dependencies.
 
 ---
 
@@ -346,6 +475,28 @@ The system also includes an extensible LLM provider abstraction layer, allowing 
 
 ---
 
+## 🚀 Roadmap
+
+### Current Version
+
+* FastAPI Backend
+* Streamlit Frontend
+* Chroma Vector Store
+* Docker Compose Deployment
+* Multi-tool Agent
+* Ollama & Groq Provider Support
+
+### Planned Improvements
+
+* Automated Evaluation Framework
+* Unit and API Testing
+* LangGraph Agent Workflow
+* PostgreSQL + pgvector
+* Cloud-native Deployment
+* React Frontend
+
+
+---
 ## 👨‍💻 Author
 
 **Zhipeng Lin**

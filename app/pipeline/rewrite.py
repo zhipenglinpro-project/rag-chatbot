@@ -31,8 +31,6 @@ def extract_entity_from_question(question: str) -> str | None:
     if words:
         return words[0]
 
-
-
     return None
 
 

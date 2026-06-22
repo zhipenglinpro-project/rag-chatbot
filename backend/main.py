@@ -8,7 +8,7 @@ from backend.document_service import load_uploaded_file, build_vector_db_from_do
 
 
 app = FastAPI(
-    title="Local RAG AI Assistant API",
+    title="AI Multi-tool RAG Assistant",
     description="Backend API for RAG chatbot",
     version="1.0.0"
 )
@@ -44,7 +44,7 @@ def chat(request: ChatRequest):
     and returns the answer plus retrieval metadata.
     """
     
-    result = result = route_query(request.question)
+    result = route_query(request.question)
 
     #result = answer_question(request.question)
 
