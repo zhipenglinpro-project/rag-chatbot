@@ -494,6 +494,7 @@ Run locally:
 
 ```bash
 pytest tests -v
+```
 
 ---
 
