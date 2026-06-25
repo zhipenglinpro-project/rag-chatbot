@@ -13,6 +13,11 @@ It enables users to upload documents and interact with a Multi-tool AI Agent tha
 ![RAG Chatbot](screenshot.png)
 
 ---
+## Why This Project Matters
+
+This project demonstrates how an LLM application can be structured beyond a simple chatbot: it separates frontend, API, retrieval, tool routing, LLM provider management, testing, and deployment concerns.
+
+---
 
 ## 🚀 Features
 
@@ -364,28 +369,118 @@ This allows Docker containers to access the LLM service running on the host mach
 
 ## 📊 Evaluation
 
-The RAG pipeline was manually evaluated across:
+The RAG pipeline was manually evaluated using 9 representative scenarios covering query rewriting, retrieval quality, reranking, grounded answer generation, fallback behaviour, and multi-tool agent routing.
 
-- Query rewriting
-- Retrieval quality
-- Reranking effectiveness
-- Grounded answer generation
-- Fallback handling
-- Multi-tool routing
+### Evaluation Environment
 
-Summary:
+| Component | Configuration |
+|---|---|
+| LLM | Ollama (Llama 3.2) |
+| Embedding Model | `sentence-transformers/all-MiniLM-L6-v2` |
+| Vector Database | Chroma |
+| Initial Retrieval | Top 8 chunks |
+| Reranking | Top 3 chunks |
 
-- All 9 manually defined evaluation scenarios passed.
+### Evaluation Scenarios
 
-Detailed results:
+| Category | Scenario | Expected Behaviour | Result |
+|---|---|---|---|
+| Query Rewrite | Pronoun resolution: “What is Chris learning?” → “What is his favorite food?” | Rewrite follow-up question as “What is Chris's favorite food?” | Passed |
+| Query Rewrite | Entity reference: “tell me about Amazon.” → “What does it do?” | Rewrite follow-up question as “What does Amazon do?” | Passed |
+| Retrieval | Ask “What technologies are used in this project?” | Retrieve context about embeddings, vector databases, RAG, and local LLMs | Passed |
+| Reranking | Ask “How is answer quality improved?” | Retrieve 8 initial chunks and prioritise the most relevant 3 chunks | Passed |
+| Grounded Answer | Ask “What vector database does the project use?” | Answer using retrieved context and identify Chroma | Passed |
+| Fallback Behaviour | Ask an out-of-knowledge question: “Who won the FIFA World Cup in 2050?” | Return fallback response instead of hallucinating | Passed |
+| Multi-tool Agent | Ask “Summarize the document.” | Route request to the summary tool | Passed |
+| Multi-tool Agent | Ask “What are the key topics in the document?” | Route request to the keyword extraction tool | Passed |
+| Multi-tool Agent | Ask “What tools are available?” | Route request to the metadata tool | Passed |
 
-See `EVALUATION.md`
+### Evaluation Summary
+
+| Category | Tests | Passed |
+|---|---:|---:|
+| Query Rewrite | 2 | 2 |
+| Retrieval | 1 | 1 |
+| Reranking | 1 | 1 |
+| Grounded Answers | 1 | 1 |
+| Fallback Behaviour | 1 | 1 |
+| Multi-tool Agent | 3 | 3 |
+
+All 9 manually defined evaluation scenarios passed under the current local evaluation setup.
+
+Detailed results are available in [`EVALUATION.md`](EVALUATION.md).
+
+### Key Findings
+
+- Query rewriting handles basic pronoun and entity-reference resolution.
+- Chroma retrieval returns relevant context for project-related questions.
+- Reranking helps reduce noisy context by prioritising the most relevant chunks.
+- Grounded answer generation reduces unsupported responses.
+- Fallback behaviour prevents out-of-knowledge questions from producing hallucinated answers.
+- Multi-tool routing correctly selects summary, keyword, metadata, and RAG tools for representative user intents.
+
+### Known Limitations
+
+- Evaluation is currently based on manually defined representative scenarios rather than a large benchmark dataset.
+- Query rewriting relies partly on entity extraction heuristics and may behave differently when named entities are ambiguous or inconsistently capitalised.
+- Current evaluation focuses on functional correctness rather than latency, retrieval precision, recall, or answer-quality scoring.
+
+### Future Evaluation Improvements
+
+- Expand evaluation coverage to 20+ benchmark questions.
+- Add automated evaluation scripts for retrieval and answer quality.
+- Track latency and retrieval-quality metrics.
+- Add regression tests for query rewriting and entity resolution edge cases.
+
+---
+
+## 🧪 Testing
+
+The project includes automated tests covering API availability, multi-tool agent routing, and chat endpoint behaviour.
+
+### Run All Tests
+
+```bash
+pytest tests -v
+```
+
+### Test Coverage
+
+| Test File | Purpose |
+|------------|----------|
+| test_health.py | Validate FastAPI health endpoint |
+| test_router.py | Validate multi-tool agent routing |
+| test_chat.py | Validate chat API request/response flow |
+
+### Example Result
+
+```text
+tests/test_health.py::test_health_endpoint PASSED
+tests/test_router.py::test_route_to_summary PASSED
+tests/test_router.py::test_route_to_keyword PASSED
+tests/test_router.py::test_route_to_metadata PASSED
+tests/test_router.py::test_route_to_rag PASSED
+
+tests/test_chat.py::test_chat_endpoint_with_mock PASSED
+
+========================
+6 passed
+========================
+```
+
+### Testing Strategy
+
+- Health endpoint testing verifies API availability.
+- Router tests validate tool selection logic.
+- Chat endpoint tests validate request and response schemas.
+- Mocked tests are used to isolate API behaviour from external LLM dependencies.
 
 ---
 
 ## 🔄 CI/CD
 
 This project includes automated validation through GitHub Actions.
+[![CI](https://github.com/zhipenglinpro-project/rag-chatbot/actions/workflows/tests.yml/badge.svg)](https://github.com/zhipenglinpro-project/rag-chatbot/actions/workflows/tests.yml)
 
 The CI pipeline automatically runs:
 
@@ -415,51 +510,6 @@ pytest tests -v
 
 ---
 
-## 🧪 Testing
-
-The project includes automated tests covering API availability, multi-tool agent routing, and chat endpoint behaviour.
-
-### Run All Tests
-
-```bash
-pytest tests -v
-```
-
-### Test Coverage
-
-| Test File | Purpose |
-|------------|----------|
-| test_health.py | Validate FastAPI health endpoint |
-| test_router.py | Validate multi-tool agent routing |
-| test_chat.py | Validate chat API request/response flow |
-
-### Example Result
-
-```text
-tests/test_health.py::test_health_endpoint PASSED
-
-tests/test_router.py::test_route_to_summary PASSED
-tests/test_router.py::test_route_to_keyword PASSED
-tests/test_router.py::test_route_to_metadata PASSED
-tests/test_router.py::test_route_to_rag PASSED
-
-tests/test_chat.py::test_chat_endpoint_with_mock PASSED
-
-========================
-6 passed
-========================
-```
-
-### Testing Strategy
-
-- Health endpoint testing verifies API availability.
-- Router tests validate tool selection logic.
-- Chat endpoint tests validate request and response schemas.
-- Mocked tests are used to isolate API behaviour from external LLM dependencies.
-
----
-
-
 ## ☁️ Deployment Note
 
 This project is designed as a local-first AI application.
@@ -472,39 +522,26 @@ The current version supports local Ollama and cloud-hosted Groq. Future extensio
 
 ---
 
-## 📌 Future Improvements
-
-- Replace rule-based routing with LLM-based Agent Router
-- Integrate LangGraph for advanced multi-step tool calling
-- Optimize the architecture for lightweight cloud deployment on platforms such as Render or Railway
-- Add RAG evaluation metrics (retrieval accuracy, answer quality, latency)
-- Migrate from Chroma to PostgreSQL + pgvector for production-level vector storage
-- Build a React frontend for a more scalable user experience
-
----
-
 ## 🚀 Roadmap
 
 ### Current Version
 
-* FastAPI Backend
-* Streamlit Frontend
-* Chroma Vector Store
-* Docker Compose Deployment
-* Multi-tool Agent
-* Ollama & Groq Provider Support
-* Unit and API tests with pytest
-* GitHub Actions CI
-* Manual evaluation scenarios
+- FastAPI backend
+- Streamlit frontend
+- Chroma vector store
+- Multi-tool agent router
+- Ollama and Groq provider support
+- Docker Compose local deployment
+- Pytest-based API and routing tests
+- GitHub Actions CI
 
 ### Planned Improvements
 
-* LangGraph Agent Workflow
-* PostgreSQL + pgvector
-* Cloud-native Deployment
-* Latency/cost tracking
-* Larger benchmark dataset
-
+- Replace rule-based routing with an LLM-based or LangGraph-based agent workflow
+- Add automated RAG evaluation metrics for retrieval quality, answer grounding, and latency
+- Optimize the application for lightweight cloud deployment on Render or Railway
+- Migrate from Chroma to PostgreSQL + pgvector for production-style vector storage
+- Build a React frontend for a more scalable user experience
 
 ---
 ## 👨‍💻 Author
