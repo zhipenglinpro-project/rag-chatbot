@@ -375,8 +375,7 @@ The RAG pipeline was manually evaluated across:
 
 Summary:
 
-- 9/9 evaluation scenarios passed
-- 100% success rate
+- All 9 manually defined evaluation scenarios passed.
 
 Detailed results:
 
@@ -469,7 +468,7 @@ The complete RAG pipeline uses local vector storage, Sentence Transformers embed
 
 Therefore, the recommended demonstration environment is Docker-based local deployment.
 
-The system also includes an extensible LLM provider abstraction layer, allowing future migration to cloud LLM services such as Groq or OpenAI without major architecture changes.
+The current version supports local Ollama and cloud-hosted Groq. Future extensions could add OpenAI or other OpenAI-compatible providers.
 
 ---
 
@@ -494,15 +493,17 @@ The system also includes an extensible LLM provider abstraction layer, allowing 
 * Docker Compose Deployment
 * Multi-tool Agent
 * Ollama & Groq Provider Support
+* Unit and API tests with pytest
+* GitHub Actions CI
+* Manual evaluation scenarios
 
 ### Planned Improvements
 
-* Automated Evaluation Framework
-* Unit and API Testing
 * LangGraph Agent Workflow
 * PostgreSQL + pgvector
 * Cloud-native Deployment
-* React Frontend
+* Latency/cost tracking
+* Larger benchmark dataset
 
 
 ---
