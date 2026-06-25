@@ -506,19 +506,15 @@ pytest tests -v
 - Developed a multi-tool AI Agent capable of selecting different tools based on user intent
 - Implemented an extensible LLM provider factory supporting local and future cloud LLM services
 - Containerized frontend and backend services using Docker and Docker Compose
-- Designed the system with future cloud deployment and agent expansion in mind
+- Implemented an extensible LLM provider factory supporting local Ollama and cloud-hosted Groq models
 
 ---
 
 ## ☁️ Deployment Note
 
-This project is designed as a local-first AI application.
+This project is designed as a local-first AI application. The full RAG pipeline uses local vector storage, Sentence Transformers embeddings, and Ollama-based inference, which can exceed the memory limits of free cloud hosting platforms.
 
-The complete RAG pipeline uses local vector storage, Sentence Transformers embeddings, and Ollama-based local LLM inference, which may exceed the memory limits of free cloud instances.
-
-Therefore, the recommended demonstration environment is Docker-based local deployment.
-
-The current version supports local Ollama and cloud-hosted Groq. Future extensions could add OpenAI or other OpenAI-compatible providers.
+For this reason, the recommended demo setup is Docker-based local deployment. The application also supports cloud-hosted Groq through the LLM provider abstraction layer, and the architecture can be extended to OpenAI or other OpenAI-compatible providers for future cloud deployment.
 
 ---
 
