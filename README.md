@@ -512,9 +512,19 @@ pytest tests -v
 
 ## ☁️ Deployment Note
 
-This project is designed as a local-first AI application. The full RAG pipeline uses local vector storage, Sentence Transformers embeddings, and Ollama-based inference, which can exceed the memory limits of free cloud hosting platforms.
+This project is designed as a **local-first AI application**.
 
-For this reason, the recommended demo setup is Docker-based local deployment. The application also supports cloud-hosted Groq through the LLM provider abstraction layer, and the architecture can be extended to OpenAI or other OpenAI-compatible providers for future cloud deployment.
+The full RAG pipeline relies on:
+
+- Local vector storage (Chroma)
+- Sentence Transformers embeddings
+- Ollama-based local inference
+
+These components can exceed the memory limits of free cloud hosting platforms.
+
+Therefore, the recommended demonstration method is **Docker-based local deployment**.
+
+The application also supports **Groq** through the LLM provider abstraction layer, and the architecture can be easily extended to **OpenAI** or other OpenAI-compatible providers for future cloud deployment.
 
 ---
 
